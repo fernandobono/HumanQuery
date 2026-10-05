@@ -1,0 +1,38 @@
+# Esquema para la Acción del GPT. Reemplazar la url de servers por la de ngrok de ese día.
+openapi: 3.1.0
+info:
+  title: HumanQuery Northwind
+  description: Consulta la base de datos Northwind en lenguaje natural. La IA genera el SQL, lo ejecuta (solo lectura) y devuelve la respuesta.
+  version: 1.0.0
+servers:
+  - url: https://REEMPLAZAR.ngrok-free.app
+paths:
+  /api/HumanQuery/human_query:
+    post:
+      operationId: consultarNorthwind
+      summary: Responde una pregunta en lenguaje natural sobre la base Northwind
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [humanQuery]
+              properties:
+                humanQuery:
+                  type: string
+                  description: La pregunta del usuario, tal cual, en castellano
+      responses:
+        "200":
+          description: Respuesta humanizada, SQL generado y filas crudas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  respuestaHumanizada: { type: string }
+                  sqlGenerado: { type: string }
+                  resultadosCrudos:
+                    type: array
+                    items: { type: object }

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA como Intérprete de DATOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 24px;
+            font-weight: 300;
+            opacity: 0.95;
+        }
+
+        .header p {
+            font-size: 18px;
+            margin-top: 15px;
+            opacity: 0.9;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+            align-items: stretch;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card h2 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-top: 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card-features li {
+            color: #555;
+            font-size: 14px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            padding-left: 25px;
+            text-align: left;
+        }
+
+        .card-features li:last-child {
+            border-bottom: none;
+        }
+
+        .card-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .card-badge.live {
+            background: #10b981;
+        }
+
+        .card-badge.api {
+            background: #f59e0b;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        .footer p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            color: white;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .info-section h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .header .subtitle {
+                font-size: 20px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Chat Assistant Styles */
+        #chatAssistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        #chatButton {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        #chatButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(102, 126, 234, 0.7);
+            }
+        }
+
+        #chatWindow {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chatWindow.show {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-header button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f7f9fc;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: fadeInMessage 0.3s ease-out;
+        }
+
+        @keyframes fadeInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message-content {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.system {
+            text-align: center;
+        }
+
+        .message.system .message-content {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .chat-send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-actions {
+            padding: 10px 20px;
+            background: #f7f9fc;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .chat-action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 15px;
+            background: white;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: loading 1.4s infinite;
+        }
+
+        .loading::before,
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: loading 1.4s infinite;
+        }
+
+        .loading::before {
+            margin-right: 5px;
+            animation-delay: -0.32s;
+        }
+
+        .loading::after {
+            margin-left: 5px;
+            animation-delay: 0.32s;
+        }
+
+        @keyframes loading {
+            0%, 80%, 100% {
+                opacity: 0.3;
+            }
+            40% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #chatWindow {
+                width: calc(100% - 40px);
+                height: calc(100% - 120px);
+                bottom: 100px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button onclick="window.location.href='../'" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    ← Volver al Menú Principal
+                </button>
+                <button onclick="window.open('learn.html', '_blank')" style="background: rgba(139, 92, 246, 0.9); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(139, 92, 246, 1)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.9)'">
+                    🎓 Guía Educativa
+                </button>
+            </div>
+            <h1>🤖 Human Query</h1>
+            <p class="subtitle">IA como Intérprete de DATOS</p>
+            <p>Explora cómo la Inteligencia Artificial puede transformar consultas humanas en SQL y presentar resultados de manera comprensible, manteniendo la privacidad y seguridad de tus datos.</p>
+        </div>
+
+        <div class="cards-grid">
+            <a href="javascript:void(0)" onclick="showAbout()" class="card">
+                <span class="card-icon">📚</span>
+                <h2>¿Cómo Funciona?</h2>
+                <p>Conoce el proceso completo: desde la consulta hasta la respuesta, incluyendo las medidas de seguridad implementadas.</p>
+                <ul class="card-features">
+                    <li>Arquitectura del sistema</li>
+                    <li>Flujo de datos paso a paso</li>
+                    <li>Privacidad y seguridad</li>
+                    <li>Tecnologías utilizadas</li>
+                    <li>Diagrama explicativo</li>
+                </ul>
+                <span class="card-badge">ℹ️ INFORMACIÓN</span>
+            </a>
+
+            <a href="../swagger" target="_blank" class="card">
+                <span class="card-icon">🔌</span>
+                <h2>API REST</h2>
+                <p>Documentación interactiva de la API. Prueba el endpoint directamente desde tu navegador.</p>
+                <ul class="card-features">
+                    <li>Documentación OpenAPI</li>
+                    <li>Pruebas interactivas</li>
+                    <li>Autenticación Basic Auth</li>
+                    <li>Ejemplos de uso</li>
+                    <li>Modelos de datos</li>
+                </ul>
+                <span class="card-badge api">📡 SWAGGER</span>
+            </a>
+
+            <a href="https://chatgpt.com/g/g-680d6490be6081919645ae922d7f9ffa-escmb-poc" target="_blank" class="card">
+                <span class="card-icon">💬</span>
+                <h2>GPT Personalizado</h2>
+                <p>Interactúa directamente con el GPT personalizado de ChatGPT que utiliza esta API para responder tus consultas.</p>
+                <ul class="card-features">
+                    <li>Interfaz conversacional</li>
+                    <li>Acceso directo a ChatGPT</li>
+                    <li>Consultas en lenguaje natural</li>
+                    <li>Integración con la API</li>
+                    <li>Experiencia interactiva</li>
+                </ul>
+                <span class="card-badge" style="background: #10a37f;">🤖 CHATGPT</span>
+            </a>
+
+            <a href="monitor.html" target="_blank" class="card">
+                <span class="card-icon">📊</span>
+                <h2>Monitor en Vivo</h2>
+                <p>Visualiza en tiempo real cómo funciona el sistema: desde la pregunta en lenguaje natural hasta la respuesta humanizada.</p>
+                <ul class="card-features">
+                    <li>Consultas en tiempo real</li>
+                    <li>SQL generado visible</li>
+                    <li>Datos crudos en tablas</li>
+                    <li>Respuestas humanizadas</li>
+                    <li>Estadísticas y tiempos</li>
+                </ul>
+                <span class="card-badge live">🟢 EN VIVO</span>
+            </a>
+        </div>
+
+        <!-- Sección de URL ngrok -->
+        <div class="info-section" style="background: rgba(255, 255, 255, 0.95); color: #333; animation-delay: 0.5s;">
+            <h3 style="color: #667eea; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                🌐 Acceso Público con ngrok
+            </h3>
+            <p style="color: #666; margin-bottom: 15px;">
+                Si estás ejecutando la API localmente y quieres acceder desde el exterior o integrarla con ChatGPT, usa ngrok para crear un túnel público.
+            </p>
+            <div style="background: #f7fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; margin-top: 15px;">
+                <strong style="color: #667eea; display: block; margin-bottom: 10px;">URL Pública Actual:</strong>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="text" id="ngrokUrl" placeholder="Pega aquí tu URL del servidor"
+                           style="flex: 1; min-width: 300px; padding: 12px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: 'Courier New', monospace;"
+                           value="">
+                    <button onclick="copyNgrokUrl()" style="background: #667eea; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                        📋 Copiar
+                    </button>
+                    <button onclick="testNgrokUrl()" style="background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                        🔍 Probar
+                    </button>
+                </div>
+
+                <!-- Sección de ayuda ngrok -->
+                <div id="ngrokHelp" style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #f59e0b; display: none;">
+                    <p style="color: #856404; font-weight: 600; margin-bottom: 10px;">ℹ️ ¿Cómo iniciar ngrok?</p>
+                    <ol style="margin: 10px 0 10px 20px; color: #856404; font-size: 14px;">
+                        <li style="margin-bottom: 8px;">Abre una terminal nueva</li>
+                        <li style="margin-bottom: 8px;">Ejecuta: <code style="background: #fff; padding: 4px 8px; border-radius: 4px; font-family: 'Courier New', monospace; display: inline-block; margin: 5px 0;">ngrok http 5126</code></li>
+                        <li style="margin-bottom: 8px;">Copia la URL que comienza con <code>https://xxxxxxxx.ngrok-free.app</code></li>
+                        <li>Pégala en el campo de arriba</li>
+                    </ol>
+                    <p style="color: #856404; font-size: 13px; margin-top: 10px;">
+                        <strong>¿No tienes ngrok instalado?</strong> <a href="https://ngrok.com/download" target="_blank" style="color: #667eea; text-decoration: underline;">Descárgalo aquí</a>
+                    </p>
+                </div>
+
+                <button onclick="toggleNgrokHelp()" style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-top: 10px; font-weight: 600;">
+                    💡 ¿Cómo iniciar ngrok?
+                </button>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>🔒 Privacidad Garantizada</h3>
+            <p>
+                <strong>La IA nunca tiene acceso directo a tus datos.</strong> Solo recibe el esquema de la base de datos (estructura de tablas y columnas) para generar las consultas SQL.
+                El backend ejecuta las consultas de forma segura y solo comparte los resultados ya obtenidos con la IA para su humanización.
+                Tus credenciales y datos sensibles permanecen protegidos en todo momento.
+            </p>
+        </div>
+
+        <div class="footer">
+            <div class="tech-stack" style="margin-bottom: 20px;">
+                <span class="tech-badge">.NET 8.0</span>
+                <span class="tech-badge">SQL Server</span>
+                <span class="tech-badge">OpenAI GPT-4</span>
+                <span class="tech-badge">ASP.NET Core</span>
+                <span class="tech-badge">RESTful API</span>
+            </div>
+            <p>© 2025 by Fernando Bono & Ariel Schwindt con colaboración especial de Bruno Capuano</p>
+            <p style="margin-top: 10px; font-size: 14px; opacity: 0.9;">Proyecto Educativo - Introducción a la Inteligencia Artificial</p>
+            <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">Escuela Superior de Comercio Manuel Belgrano - UNC - Analista Universitario de Sistemas de Informacion</p>
+            <p style="margin-top: 5px; font-size: 14px; opacity: 0.9;">Ingeniería de Sistemas - UCC - Universidad Católica de Córdoba</p>
+        </div>
+    </div>
+
+    <!-- Modal de información -->
+    <div id="aboutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto;" onclick="closeAbout(event)">
+        <div style="background: white; margin: 50px auto; padding: 40px; max-width: 900px; border-radius: 15px; position: relative;" onclick="event.stopPropagation()">
+            <button onclick="closeAbout()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 32px; cursor: pointer; color: #666;">&times;</button>
+
+            <h2 style="color: #667eea; font-size: 28px; margin-bottom: 20px;">🤖 ¿Cómo funciona esta aplicación?</h2>
+
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #333; font-size: 20px; margin-bottom: 15px;">📋 Descripción</h3>
+                <p style="color: #666; line-height: 1.8;">Esta API permite hacer consultas a una base de datos SQL Server usando <strong>lenguaje natural</strong>, sin necesidad de escribir SQL. La inteligencia artificial traduce tu pregunta en una consulta SQL, obtiene los resultados y los presenta de forma comprensible.</p>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f7fafc; border-radius: 10px;">
+                <img src="Resumen%20IA%20POC%20.jpeg" alt="Diagrama de flujo del sistema" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);" onerror="this.style.display='none'">
+            </div>
+
+            <div style="background: #f7fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; margin: 30px 0;">
+                <h3 style="color: #333; font-size: 20px; margin-bottom: 15px;">🔄 Flujo paso a paso</h3>
+                <ol style="margin: 0; padding-left: 20px;">
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Usuario hace una consulta en lenguaje natural</strong><br>Ejemplo: <em>"Muéstrame los 10 productos más vendidos"</em></li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Backend envía a la IA:</strong><br>La consulta del usuario y el esquema de la base de datos (solo estructura)</li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">IA devuelve una sentencia SQL</strong><br>Ejemplo: <code>SELECT TOP 10 * FROM Products ORDER BY Sales DESC</code></li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Backend ejecuta la sentencia SQL</strong><br>Se conecta de forma segura a la base de datos</li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Base de datos devuelve resultados crudos</strong><br>Datos en formato de filas y columnas</li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Backend envía resultados a la IA</strong><br>Solo los datos ya obtenidos (no acceso directo a la BD)</li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">IA devuelve resultados humanizados</strong><br>Transforma los datos en respuesta comprensible</li>
+                    <li style="margin-bottom: 15px; color: #333; line-height: 1.6;"><strong style="color: #667eea;">Usuario recibe la respuesta en lenguaje natural</strong></li>
+                </ol>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #333; font-size: 20px; margin-bottom: 15px;">🛠️ Tecnologías</h3>
+                <p style="color: #666; line-height: 1.8;">ASP.NET Core 8.0, SQL Server, OpenAI GPT-4, Basic Authentication, REST API, Swagger/OpenAPI</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button onclick="window.open('monitor.html', '_blank')" style="background: #667eea; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-right: 10px;">
+                    Ver Monitor en Vivo 📊
+                </button>
+                <button onclick="window.location.href='./'" style="background: #6b7280; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                    ← Volver al Menú
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAbout(event) {
+            if (!event || event.target.id === 'aboutModal') {
+                document.getElementById('aboutModal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAbout();
+            }
+        });
+
+        // Funciones para ngrok
+        function copyNgrokUrl() {
+            const urlInput = document.getElementById('ngrokUrl');
+            const url = urlInput.value.trim();
+
+            if (!url || url === 'https://xxxxx.ngrok-free.app') {
+                alert('⚠️ Primero debes iniciar ngrok y colocar la URL generada');
+                return;
+            }
+
+            urlInput.select();
+            navigator.clipboard.writeText(url).then(() => {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✓ Copiado!';
+                button.style.background = '#10b981';
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#667eea';
+                }, 2000);
+            }).catch(() => {
+                // Fallback para navegadores antiguos
+                document.execCommand('copy');
+            });
+        }
+
+        function testNgrokUrl() {
+            const url = document.getElementById('ngrokUrl').value.trim();
+
+            if (!url || url === 'https://xxxxx.ngrok-free.app') {
+                alert('⚠️ Primero debes iniciar ngrok y colocar la URL generada');
+                return;
+            }
+
+            // Abrir Swagger en nueva pestaña
+            window.open(url + '/swagger', '_blank');
+        }
+
+        function toggleNgrokHelp() {
+            const helpDiv = document.getElementById('ngrokHelp');
+            if (helpDiv.style.display === 'none' || helpDiv.style.display === '') {
+                helpDiv.style.display = 'block';
+                event.target.innerHTML = '✕ Cerrar ayuda';
+                event.target.style.background = '#6b7280';
+            } else {
+                helpDiv.style.display = 'none';
+                event.target.innerHTML = '💡 ¿Cómo iniciar ngrok?';
+                event.target.style.background = '#f59e0b';
+            }
+        }
+
+        // Detectar si hay una URL válida al cargar la página
+        window.addEventListener('load', function() {
+            const urlInput = document.getElementById('ngrokUrl');
+            const currentUrl = urlInput.value.trim();
+
+            // Si no hay URL válida, mostrar ayuda automáticamente
+            if (!currentUrl || currentUrl === 'https://xxxxx.ngrok-free.app' || currentUrl.includes('xxxxx')) {
+                urlInput.value = '';
+                urlInput.placeholder = '🚀 Pega aquí la URL de ngrok después de iniciarla';
+                urlInput.style.borderColor = '#f59e0b';
+
+                // Mostrar ayuda automáticamente si no hay URL
+                document.getElementById('ngrokHelp').style.display = 'block';
+            }
+        });
+
+        // Chat Assistant Functions
+        let chatHistory = [];
+        let isProcessing = false;
+
+        // Load history from localStorage
+        function loadChatHistory() {
+            const saved = localStorage.getItem('chatHistory');
+            if (saved) {
+                chatHistory = JSON.parse(saved);
+                chatHistory.forEach(msg => displayChatMessage(msg.role, msg.content, false));
+            }
+        }
+
+        // Save history to localStorage
+        function saveChatHistory() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+        }
+
+        // Toggle chat window
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('show');
+
+            if (chatWindow.classList.contains('show')) {
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        // Display message in chat
+        function displayChatMessage(role, content, save = true) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            if (save) {
+                chatHistory.push({ role, content, timestamp: now.toISOString() });
+                saveChatHistory();
+            }
+        }
+
+        // Send message
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message || isProcessing) return;
+
+            // Display user message
+            displayChatMessage('user', message);
+            input.value = '';
+
+            // Show loading
+            isProcessing = true;
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="loading"></span>';
+
+            try {
+                // Get ngrok URL or use relative path
+                const ngrokUrl = document.getElementById('ngrokUrl')?.value?.trim() || '';
+
+                // Prepare headers
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                // Determine the API endpoint
+                let apiUrl;
+                if (ngrokUrl && (ngrokUrl.includes('ngrok') || ngrokUrl.startsWith('http'))) {
+                    // Use external URL (ngrok or custom)
+                    apiUrl = `${ngrokUrl}/api/HumanQuery/human_query`;
+                    if (ngrokUrl.includes('ngrok')) {
+                        headers['ngrok-skip-browser-warning'] = 'true';
+                    }
+                } else {
+                    // Use relative path (works with PathBase automatically)
+                    apiUrl = '../api/HumanQuery/human_query';
+                }
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ HumanQuery: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Display assistant response
+                if (data.success && data.respuestaHumanizada) {
+                    displayChatMessage('assistant', data.respuestaHumanizada);
+                } else {
+                    displayChatMessage('system', '⚠️ No se pudo procesar la consulta. Intenta de nuevo.');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                displayChatMessage('system', `❌ Error: ${error.message}. Verifica que el servidor esté corriendo.`);
+            } finally {
+                isProcessing = false;
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '▶';
+                input.focus();
+            }
+        }
+
+        // Clear history
+        function clearChatHistory() {
+            if (confirm('¿Seguro que quieres borrar todo el historial?')) {
+                chatHistory = [];
+                localStorage.removeItem('chatHistory');
+                document.getElementById('chatMessages').innerHTML = `
+                    <div class="message system">
+                        <div class="message-content">
+                            Historial limpiado. ¡Comienza una nueva conversación! 🎉
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Show examples
+        function showChatExamples() {
+            const examples = [
+                "¿Cuántos productos hay en total?",
+                "Muéstrame los 10 productos más vendidos",
+                "¿Cuál es el promedio de ventas por categoría?",
+                "Lista los clientes que compraron este mes",
+                "¿Cuál es el producto con mayor stock?"
+            ];
+
+            const examplesHtml = examples.map(ex =>
+                `<li style="cursor: pointer; padding: 8px; hover: background: #f0f0f0;"
+                     onclick="document.getElementById('chatInput').value='${ex}'; document.getElementById('chatMessages').scrollTop = 0;">
+                    ${ex}
+                </li>`
+            ).join('');
+
+            displayChatMessage('system', `
+                <strong>💡 Ejemplos de consultas:</strong>
+                <ul style="text-align: left; margin: 10px 0 0 20px; font-size: 13px;">
+                    ${examplesHtml}
+                </ul>
+            `);
+        }
+
+        // Initialize chat on load
+        window.addEventListener('load', () => {
+            loadChatHistory();
+        });
+    </script>
+
+    <!-- Chat Assistant Widget -->
+    <div id="chatAssistant">
+        <button id="chatButton" onclick="toggleChat()">🤖</button>
+
+        <div id="chatWindow">
+            <div class="chat-header">
+                <h3>🤖 Asistente IA</h3>
+                <button onclick="toggleChat()">×</button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system">
+                    <div class="message-content">
+                        ¡Hola! Soy tu asistente IA. Puedo ayudarte a consultar la base de datos en lenguaje natural. 💬
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-actions">
+                <button class="chat-action-btn" onclick="clearChatHistory()">🗑️ Limpiar</button>
+                <button class="chat-action-btn" onclick="showChatExamples()">💡 Ejemplos</button>
+            </div>
+
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Escribe tu consulta..."
+                       onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button class="chat-send-btn" id="sendBtn" onclick="sendChatMessage()">▶</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

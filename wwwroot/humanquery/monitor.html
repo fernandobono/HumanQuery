@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Consultas - OpenAI Web API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .help-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .help-button:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 40px;
+            max-width: 900px;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            color: #ef4444;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal-section p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .flow-steps {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .flow-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .flow-steps li {
+            margin-bottom: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .flow-steps li strong {
+            color: #667eea;
+        }
+
+        .diagram-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .auto-refresh input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .logs {
+            display: grid;
+            gap: 20px;
+        }
+
+        .log-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+
+        .log-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .log-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .log-status.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .log-status.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .log-time {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .log-section {
+            margin-bottom: 20px;
+        }
+
+        .log-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-content {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .log-content.sql {
+            border-left-color: #10b981;
+        }
+
+        .log-content.answer {
+            border-left-color: #f59e0b;
+            font-family: inherit;
+        }
+
+        .log-content.error {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .log-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .log-meta-item {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .log-meta-item strong {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .log-meta-item span {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state h3 {
+            color: #667eea;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .prompt-toggle {
+            background: #e0e7ff;
+            color: #667eea;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .prompt-toggle:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .prompt-content {
+            display: none;
+            background: #f0f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .prompt-content.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                🔍 Monitor de Consultas
+                <button class="help-button" onclick="openHelpModal()" title="¿Cómo funciona?">ℹ️</button>
+            </h1>
+            <p>Visualización en tiempo real del flujo de consultas en lenguaje natural a SQL</p>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <h3>Total Consultas</h3>
+                <div class="value" id="totalQueries">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Exitosas</h3>
+                <div class="value" style="color: #10b981" id="successQueries">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Fallidas</h3>
+                <div class="value" style="color: #ef4444" id="failedQueries">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Tiempo Promedio</h3>
+                <div class="value" id="avgTime">0ms</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="refreshLogs()">🔄 Actualizar</button>
+            <button onclick="clearLogs()">🗑️ Limpiar Logs</button>
+            <button onclick="window.location.href='./'">← Menú Principal</button>
+            <div class="auto-refresh">
+                <input type="checkbox" id="autoRefresh" checked onchange="toggleAutoRefresh()">
+                <label for="autoRefresh">Auto-actualizar (5s)</label>
+            </div>
+        </div>
+
+        <div id="logsContainer" class="logs">
+            <div class="loading">Cargando logs...</div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda -->
+    <div id="helpModal" class="modal" onclick="closeHelpModalOnOutsideClick(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🤖 ¿Cómo funciona esta aplicación?</h2>
+                <button class="close-button" onclick="closeHelpModal()">&times;</button>
+            </div>
+
+            <div class="modal-section">
+                <h3>📋 Descripción</h3>
+                <p>Esta API permite hacer consultas a una base de datos SQL Server usando <strong>lenguaje natural</strong>, sin necesidad de escribir SQL. La inteligencia artificial traduce tu pregunta en una consulta SQL, obtiene los resultados y los presenta de forma comprensible.</p>
+            </div>
+
+            <div class="modal-section">
+                <h3>🔒 Privacidad y Seguridad</h3>
+                <p><strong>Importante:</strong> La IA <strong>NUNCA tiene acceso a tus datos reales</strong>. Solo recibe el esquema de la base de datos (nombres de tablas y columnas) y los resultados ya obtenidos para humanizarlos. El backend actúa como intermediario seguro.</p>
+            </div>
+
+            <div class="diagram-container">
+                <img src="Resumen%20IA%20POC%20.jpeg" alt="Diagrama de flujo del sistema" onerror="this.style.display='none'">
+            </div>
+
+            <div class="modal-section">
+                <h3>🔄 Flujo paso a paso</h3>
+                <div class="flow-steps">
+                    <ol>
+                        <li><strong>Usuario hace una consulta en lenguaje natural</strong><br>
+                            Ejemplo: <em>"Muéstrame los 10 productos más vendidos"</em></li>
+
+                        <li><strong>Backend envía a la IA:</strong><br>
+                            La consulta del usuario y el esquema de la base de datos (solo estructura: tablas y columnas)</li>
+
+                        <li><strong>IA devuelve una sentencia SQL</strong><br>
+                            Ejemplo: <code>SELECT TOP 10 * FROM Products ORDER BY Sales DESC</code></li>
+
+                        <li><strong>Backend ejecuta la sentencia SQL</strong><br>
+                            Se conecta de forma segura a la base de datos y ejecuta el query generado</li>
+
+                        <li><strong>Base de datos devuelve resultados crudos</strong><br>
+                            Datos en formato de filas y columnas</li>
+
+                        <li><strong>Backend envía resultados crudos a la IA</strong><br>
+                            Solo los datos ya obtenidos (no acceso a la BD)</li>
+
+                        <li><strong>IA devuelve resultados humanizados</strong><br>
+                            Transforma los datos en una respuesta comprensible</li>
+
+                        <li><strong>Usuario recibe la respuesta en lenguaje natural</strong></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3>📊 Este Monitor</h3>
+                <p>Este monitor muestra en tiempo real cada paso del proceso, permitiéndote ver:</p>
+                <ul>
+                    <li>La consulta original en lenguaje natural</li>
+                    <li>El SQL generado por la IA</li>
+                    <li>Los datos crudos devueltos por la base de datos</li>
+                    <li>La respuesta humanizada final</li>
+                    <li>Estadísticas y tiempos de ejecución</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval;
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch('../api/Monitoring/logs');
+                if (!response.ok) throw new Error('Error fetching logs');
+                const logs = await response.json();
+
+                const statsResponse = await fetch('../api/Monitoring/stats');
+                if (!statsResponse.ok) throw new Error('Error fetching stats');
+                const stats = await statsResponse.json();
+
+                updateStats(stats);
+                displayLogs(logs);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('logsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>⚠️ Error al cargar logs</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalQueries').textContent = stats.totalQueries;
+            document.getElementById('successQueries').textContent = stats.successfulQueries;
+            document.getElementById('failedQueries').textContent = stats.failedQueries;
+            document.getElementById('avgTime').textContent = Math.round(stats.averageResponseTime) + 'ms';
+        }
+
+        function displayLogs(logs) {
+            const container = document.getElementById('logsContainer');
+
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 No hay logs disponibles</h3>
+                        <p>Realiza una consulta para ver los resultados aquí</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = logs.map(log => `
+                <div class="log-card">
+                    <div class="log-header">
+                        <span class="log-status ${log.success ? 'success' : 'error'}">
+                            ${log.success ? '✓ EXITOSO' : '✗ ERROR'}
+                        </span>
+                        <div class="log-time">
+                            ${new Date(log.timestamp).toLocaleString('es-AR', {
+                                dateStyle: 'medium',
+                                timeStyle: 'medium'
+                            })}
+                        </div>
+                    </div>
+
+                    <div class="log-section">
+                        <h4>📝 Consulta Original</h4>
+                        <div class="log-content">${escapeHtml(log.humanQuery)}</div>
+                    </div>
+
+                    ${log.generatedSql ? `
+                        <div class="log-section">
+                            <h4>🔧 SQL Generado</h4>
+                            <div class="log-content sql">${escapeHtml(log.generatedSql)}</div>
+                            ${log.promptToGenerateSql ? `
+                                <button class="prompt-toggle" onclick="togglePrompt('prompt-sql-${log.id}')">
+                                    <span>📋</span>
+                                    <span>Ver Prompt Enviado a IA</span>
+                                </button>
+                                <div id="prompt-sql-${log.id}" class="prompt-content">${escapeHtml(log.promptToGenerateSql)}</div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+
+                    ${log.rawDataJson ? renderDataTable(log.rawDataJson) : ''}
+
+                    ${log.humanizedAnswer ? `
+                        <div class="log-section">
+                            <h4>💬 Respuesta Humanizada</h4>
+                            <div class="log-content answer">${escapeHtml(log.humanizedAnswer)}</div>
+                            ${log.promptToHumanize ? `
+                                <button class="prompt-toggle" onclick="togglePrompt('prompt-humanize-${log.id}')">
+                                    <span>📋</span>
+                                    <span>Ver Prompt Enviado a IA</span>
+                                </button>
+                                <div id="prompt-humanize-${log.id}" class="prompt-content">${escapeHtml(log.promptToHumanize)}</div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+
+                    ${log.errorMessage ? `
+                        <div class="log-section">
+                            <h4>⚠️ Error</h4>
+                            <div class="log-content error">${escapeHtml(log.errorMessage)}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="log-meta">
+                        <div class="log-meta-item">
+                            <strong>Resultados</strong>
+                            <span>${log.resultCount !== null ? log.resultCount : 'N/A'}</span>
+                        </div>
+                        <div class="log-meta-item">
+                            <strong>Tiempo de Respuesta</strong>
+                            <span>${log.elapsedMilliseconds}ms</span>
+                        </div>
+                        <div class="log-meta-item">
+                            <strong>ID</strong>
+                            <span style="font-size: 12px">${log.id.substring(0, 8)}...</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDataTable(rawDataJson) {
+            try {
+                const data = JSON.parse(rawDataJson);
+
+                if (!data || data.length === 0) {
+                    return `
+                        <div class="log-section">
+                            <h4>📊 Datos Crudos</h4>
+                            <div class="log-content">Sin resultados</div>
+                        </div>
+                    `;
+                }
+
+                // Obtener todas las columnas del primer registro
+                const columns = Object.keys(data[0]);
+
+                // Crear la tabla HTML
+                const tableHtml = `
+                    <div class="log-section">
+                        <h4>📊 Datos Crudos (${data.length} ${data.length === 1 ? 'registro' : 'registros'})</h4>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        ${columns.map(col => `<th>${escapeHtml(col)}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.map(row => `
+                                        <tr>
+                                            ${columns.map(col => {
+                                                let value = row[col];
+                                                // Formatear valores especiales
+                                                if (value === null) {
+                                                    value = '<em style="color: #999;">NULL</em>';
+                                                } else if (typeof value === 'object') {
+                                                    value = escapeHtml(JSON.stringify(value));
+                                                } else {
+                                                    value = escapeHtml(String(value));
+                                                }
+                                                return `<td>${value}</td>`;
+                                            }).join('')}
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                return tableHtml;
+            } catch (error) {
+                console.error('Error parsing raw data:', error);
+                return `
+                    <div class="log-section">
+                        <h4>📊 Datos Crudos</h4>
+                        <div class="log-content error">Error al parsear los datos</div>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function refreshLogs() {
+            await fetchLogs();
+        }
+
+        async function clearLogs() {
+            if (!confirm('¿Estás seguro de que quieres limpiar todos los logs?')) return;
+
+            try {
+                const response = await fetch('../api/Monitoring/logs', {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Error clearing logs');
+                await fetchLogs();
+            } catch (error) {
+                alert('Error al limpiar logs: ' + error.message);
+            }
+        }
+
+        function toggleAutoRefresh() {
+            const checkbox = document.getElementById('autoRefresh');
+            if (checkbox.checked) {
+                autoRefreshInterval = setInterval(fetchLogs, 5000);
+            } else {
+                clearInterval(autoRefreshInterval);
+            }
+        }
+
+        // Inicializar
+        fetchLogs();
+        autoRefreshInterval = setInterval(fetchLogs, 5000);
+
+        // Funciones del modal de ayuda
+        function openHelpModal() {
+            document.getElementById('helpModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaurar scroll del body
+        }
+
+        function closeHelpModalOnOutsideClick(event) {
+            const modal = document.getElementById('helpModal');
+            if (event.target === modal) {
+                closeHelpModal();
+            }
+        }
+
+        // Cerrar modal con la tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeHelpModal();
+            }
+        });
+
+        // Toggle prompt visibility
+        function togglePrompt(id) {
+            const promptElement = document.getElementById(id);
+            if (promptElement) {
+                promptElement.classList.toggle('show');
+            }
+        }
+    </script>
+</body>
+</html>

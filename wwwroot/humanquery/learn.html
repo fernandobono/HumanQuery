@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Query - Guía Educativa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .difficulty-beginner {
+            background: #4ade80;
+            color: white;
+        }
+
+        .difficulty-intermediate {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .difficulty-advanced {
+            background: #f87171;
+            color: white;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Content */
+        .content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            min-height: 500px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #333;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #fbbf24;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box h4 {
+            color: #f59e0b;
+            margin-top: 0;
+        }
+
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .success-box h4 {
+            color: #059669;
+            margin-top: 0;
+        }
+
+        /* Code blocks */
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .inline-code {
+            background: #f3f4f6;
+            color: #e11d48;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Diagrams */
+        .diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .diagram-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-button">← Volver a Human Query</a>
+            <h1>📚 Human Query - Guía Educativa</h1>
+            <p>Aprende cómo funciona el sistema de consultas en lenguaje natural</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('intro')">🎯 ¿Qué es?</button>
+            <button class="tab-button" onclick="showTab('architecture')">🏗️ Arquitectura</button>
+            <button class="tab-button" onclick="showTab('flow')">🔄 Flujo de Datos</button>
+            <button class="tab-button" onclick="showTab('code-walkthrough')">💻 Código Paso a Paso</button>
+            <button class="tab-button" onclick="showTab('examples')">🌟 Ejemplos</button>
+        </div>
+
+        <div class="content">
+            <!-- TAB 1: ¿Qué es? -->
+            <div id="intro" class="tab-content active">
+                <h2>¿Qué es Human Query? <span class="difficulty-badge difficulty-beginner">Principiante</span></h2>
+
+                <h3>Definición Simple</h3>
+                <p>
+                    <strong>Human Query</strong> es un sistema que te permite hacer preguntas a una base de datos
+                    usando <strong>lenguaje natural</strong> (español o inglés), y obtener respuestas en lenguaje humano
+                    sin necesidad de saber SQL.
+                </p>
+
+                <h3>Analogía del Mundo Real</h3>
+                <div class="info-box">
+                    <h4>🗣️ Como hablar con un traductor experto</h4>
+                    <p>
+                        Imagina que tenés una biblioteca gigante (base de datos) con millones de libros,
+                        pero todos están catalogados en un idioma técnico complicado (SQL).
+                    </p>
+                    <p>
+                        En lugar de aprender ese idioma, tenés un traductor experto (OpenAI) que:
+                    </p>
+                    <ol>
+                        <li>Escucha tu pregunta en español: "¿Cuántos libros hay de ciencia ficción?"</li>
+                        <li>La traduce al idioma técnico de la biblioteca (SQL)</li>
+                        <li>Busca la información en el catálogo</li>
+                        <li>Te responde en español: "Hay 127 libros de ciencia ficción"</li>
+                    </ol>
+                </div>
+
+                <h3>¿Para qué sirve?</h3>
+                <ol>
+                    <li><strong>Democratización de datos</strong>: Cualquiera puede consultar la base de datos sin saber SQL</li>
+                    <li><strong>Rapidez</strong>: No necesitas escribir queries complejas</li>
+                    <li><strong>Menos errores</strong>: La IA genera SQL correcto y optimizado</li>
+                    <li><strong>Respuestas claras</strong>: Los resultados se presentan en lenguaje humano</li>
+                </ol>
+
+                <h3>Componentes del Sistema</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Descripción</th>
+                            <th>Tecnología</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Frontend</strong></td>
+                            <td>Interfaz donde el usuario escribe su pregunta</td>
+                            <td>HTML + JavaScript</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HumanQueryController</strong></td>
+                            <td>Controlador que recibe la pregunta y coordina el proceso</td>
+                            <td>ASP.NET Core</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAiService</strong></td>
+                            <td>Servicio que se comunica con OpenAI</td>
+                            <td>OpenAI API (GPT-4)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SQL Server</strong></td>
+                            <td>Base de datos donde se ejecutan las consultas</td>
+                            <td>Microsoft SQL Server</td>
+                        </tr>
+                        <tr>
+                            <td><strong>QueryLogService</strong></td>
+                            <td>Servicio que registra todas las consultas para monitoreo</td>
+                            <td>In-Memory Storage</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="success-box">
+                    <h4>✅ En Resumen</h4>
+                    <p>
+                        Human Query convierte preguntas en lenguaje natural a consultas SQL, las ejecuta en la base de datos,
+                        y presenta los resultados en un formato fácil de entender para cualquier persona.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TAB 2: Arquitectura -->
+            <div id="architecture" class="tab-content">
+                <h2>Arquitectura del Sistema <span class="difficulty-badge difficulty-intermediate">Intermedio</span></h2>
+
+                <h3>Diagrama de Arquitectura Completa</h3>
+                <div class="diagram">
+                    <div class="diagram-title">Sistema de 3 Etapas: Traducción → Ejecución → Humanización</div>
+<pre>
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          NAVEGADOR WEB                                  │
+│                                                                         │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │               humanquery.html (Frontend)                          │ │
+│  │                                                                   │ │
+│  │  [Input: "¿Cuántos clientes hay?"]  [Enviar]                    │ │
+│  │                                                                   │ │
+│  │  💬 Respuesta humanizada: Hay 91 clientes en total              │ │
+│  │  📊 SQL generado: SELECT COUNT(*) FROM Customers                 │ │
+│  │  🗂️  Resultados crudos: [{"count": 91}]                          │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+│                                  │                                     │
+│                                  │ HTTP POST /api/HumanQuery/human_query │
+└──────────────────────────────────┼─────────────────────────────────────┘
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    ASP.NET CORE 8.0 BACKEND                             │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │           HumanQueryController.cs                               │   │
+│  │                                                                 │   │
+│  │  POST /human_query                                              │   │
+│  │                                                                 │   │
+│  │  1️⃣  HumanQueryToSqlAsync()                                     │   │
+│  │     ↓                                                           │   │
+│  │  2️⃣  QueryDatabaseAsync()                                       │   │
+│  │     ↓                                                           │   │
+│  │  3️⃣  BuildAnswerAsync()                                         │   │
+│  └──────────────┬────────────┬────────────┬─────────────────────────┘   │
+│                 │            │            │                            │
+│                 ▼            ▼            ▼                            │
+│     ┌────────────────┐  ┌─────────┐  ┌──────────────┐                 │
+│     │ OpenAiService  │  │SQL      │  │QueryLogService│                 │
+│     │                │  │Server   │  │              │                 │
+│     │- SendPrompt()  │  │         │  │- AddLog()    │                 │
+│     └───────┬────────┘  └────┬────┘  └──────────────┘                 │
+└─────────────┼──────────────────┼─────────────────────────────────────────┘
+              │                 │
+              │ HTTPS           │ ADO.NET
+              ▼                 ▼
+     ┌──────────────────┐  ┌────────────────┐
+     │   OPENAI API     │  │  SQL SERVER    │
+     │                  │  │                │
+     │  - GPT-4         │  │  - Northwind   │
+     │  - Text In/Out   │  │  - Tables      │
+     └──────────────────┘  └────────────────┘
+</pre>
+                </div>
+
+                <h3>Las 3 Etapas del Proceso</h3>
+
+                <h4>Etapa 1: Traducción (Human → SQL)</h4>
+                <p>
+                    El método <span class="inline-code">HumanQueryToSqlAsync</span> toma la pregunta del usuario y:
+                </p>
+                <ul>
+                    <li>Obtiene el esquema completo de la base de datos (tablas y columnas)</li>
+                    <li>Crea un prompt para OpenAI con el esquema y la pregunta</li>
+                    <li>OpenAI genera una consulta SQL válida</li>
+                    <li>Retorna el SQL en formato JSON: <span class="inline-code">{"sql_query": "SELECT ..."}</span></li>
+                </ul>
+
+                <h4>Etapa 2: Ejecución (SQL → Resultados)</h4>
+                <p>
+                    El método <span class="inline-code">QueryDatabaseAsync</span>:
+                </p>
+                <ul>
+                    <li>Recibe la consulta SQL generada por OpenAI</li>
+                    <li>La ejecuta contra SQL Server usando ADO.NET</li>
+                    <li>Convierte los resultados en una lista de diccionarios</li>
+                    <li>Maneja errores de SQL y retorna lista vacía si falla</li>
+                </ul>
+
+                <h4>Etapa 3: Humanización (Resultados → Respuesta Natural)</h4>
+                <p>
+                    El método <span class="inline-code">BuildAnswerAsync</span>:
+                </p>
+                <ul>
+                    <li>Toma los resultados crudos de la base de datos</li>
+                    <li>Los envía a OpenAI junto con la pregunta original</li>
+                    <li>OpenAI genera una respuesta en lenguaje natural</li>
+                    <li>Ejemplo: "Hay 91 clientes en la base de datos"</li>
+                </ul>
+
+                <div class="warning-box">
+                    <h4>⚠️ Consideraciones de Seguridad</h4>
+                    <ul>
+                        <li>El SQL generado no está sanitizado - confía en que OpenAI genera SQL seguro</li>
+                        <li>No hay validación de permisos - cualquier usuario puede consultar cualquier tabla</li>
+                        <li>Los errores de SQL se ocultan - podría generar respuestas incorrectas</li>
+                        <li>Para producción: agregar validación de SQL, permisos por usuario, y auditoría</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 3: Flujo de Datos -->
+            <div id="flow" class="tab-content">
+                <h2>Flujo de Datos Completo <span class="difficulty-badge difficulty-intermediate">Intermedio</span></h2>
+
+                <h3>Ejemplo: "¿Cuántos clientes hay?"</h3>
+
+                <h4>1. Usuario envía la pregunta</h4>
+                <pre>POST /api/HumanQuery/human_query
+Content-Type: application/json
+
+{
+  "HumanQuery": "¿Cuántos clientes hay?"
+}</pre>
+
+                <h4>2. Backend obtiene el esquema de la BD</h4>
+                <pre>-- Consulta INFORMATION_SCHEMA
+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'
+SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @TableName
+
+-- Resultado:
+Customers(CustomerID nvarchar, CompanyName nvarchar, ContactName nvarchar, ...);
+Orders(OrderID int, CustomerID nvarchar, OrderDate datetime, ...);
+Products(ProductID int, ProductName nvarchar, UnitPrice money, ...);</pre>
+
+                <h4>3. Primera llamada a OpenAI (Generar SQL)</h4>
+                <pre>Prompt enviado a OpenAI:
+---
+Given the following schema, write a SQL query that retrieves the requested information.
+Return the SQL query inside a JSON structure with the key "sql_query".
+
+IMPORTANT: This is SQL Server, so:
+- Always use square brackets [] around table names and column names
+
+&lt;schema&gt;
+Customers(CustomerID nvarchar, CompanyName nvarchar, ...);
+Orders(OrderID int, CustomerID nvarchar, ...);
+&lt;/schema&gt;
+
+User query: ¿Cuántos clientes hay?
+---
+
+Respuesta de OpenAI:
+{
+  "sql_query": "SELECT COUNT(*) as total FROM [Customers]"
+}</pre>
+
+                <h4>4. Ejecutar SQL en la base de datos</h4>
+                <pre>-- SQL ejecutado:
+SELECT COUNT(*) as total FROM [Customers]
+
+-- Resultado:
+[
+  {
+    "total": 91
+  }
+]</pre>
+
+                <h4>5. Segunda llamada a OpenAI (Humanizar respuesta)</h4>
+                <pre>Prompt enviado a OpenAI:
+---
+Given a user's question and the SQL rows response from the database,
+write a human-readable response to the user's question.
+
+&lt;user_question&gt;
+¿Cuántos clientes hay?
+&lt;/user_question&gt;
+
+&lt;sql_response&gt;
+[{"total": 91}]
+&lt;/sql_response&gt;
+---
+
+Respuesta de OpenAI:
+"Hay 91 clientes en la base de datos."</pre>
+
+                <h4>6. Respuesta final al frontend</h4>
+                <pre>HTTP 200 OK
+Content-Type: application/json
+
+{
+  "success": true,
+  "respuestaHumanizada": "Hay 91 clientes en la base de datos.",
+  "sqlGenerado": "SELECT COUNT(*) as total FROM [Customers]",
+  "resultadosCrudos": [
+    {
+      "total": 91
+    }
+  ]
+}</pre>
+
+                <div class="info-box">
+                    <h4>📊 Logs y Monitoreo</h4>
+                    <p>
+                        Cada consulta se registra en el <span class="inline-code">QueryLogService</span> con:
+                    </p>
+                    <ul>
+                        <li>Timestamp</li>
+                        <li>Pregunta original del usuario</li>
+                        <li>Esquema de BD usado</li>
+                        <li>Prompt enviado para generar SQL</li>
+                        <li>SQL generado</li>
+                        <li>Cantidad de resultados</li>
+                        <li>Prompt enviado para humanizar</li>
+                        <li>Respuesta humanizada</li>
+                        <li>Tiempo de ejecución</li>
+                        <li>Éxito/Error</li>
+                    </ul>
+                    <p>
+                        Esto permite monitorear y depurar el sistema en <span class="inline-code">/humanquery/monitor.html</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- TAB 4: Código Paso a Paso -->
+            <div id="code-walkthrough" class="tab-content">
+                <h2>Código Paso a Paso <span class="difficulty-badge difficulty-advanced">Avanzado</span></h2>
+
+                <h3>HumanQueryController.cs - Endpoint Principal</h3>
+
+                <h4>1. Recepción de la solicitud</h4>
+<pre>[HttpPost("human_query")]
+public async Task&lt;IActionResult&gt; HumanQuery([FromBody] PostHumanQueryPayload payload)
+{
+    var stopwatch = Stopwatch.StartNew();
+    var log = new QueryLog
+    {
+        Id = Guid.NewGuid(),
+        Timestamp = DateTime.UtcNow,
+        HumanQuery = payload.HumanQuery ?? string.Empty,
+        Success = false
+    };
+
+    try
+    {
+        if (string.IsNullOrWhiteSpace(payload.HumanQuery))
+        {
+            log.ErrorMessage = "La consulta humana no puede ser vacía.";
+            _logService.AddLog(log);
+            return BadRequest(new { message = log.ErrorMessage });
+        }</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Crea un log para registrar toda la operación</li>
+                    <li>Inicia un cronómetro para medir el tiempo de ejecución</li>
+                    <li>Valida que la pregunta no esté vacía</li>
+                </ul>
+
+                <h4>2. Obtener esquema de la base de datos</h4>
+<pre>// Obtener schema
+log.DatabaseSchema = GetSchema();</pre>
+
+                <p>El método <span class="inline-code">GetSchema()</span>:</p>
+<pre>private string GetSchema()
+{
+    using (var connection = new SqlConnection(_connectionString))
+    {
+        connection.Open();
+
+        // Obtener todas las tablas
+        var cmd = new SqlCommand(@"
+            SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_TYPE = 'BASE TABLE'
+        ", connection);
+
+        var reader = cmd.ExecuteReader();
+        var tableNames = new List&lt;string&gt;();
+
+        while (reader.Read())
+        {
+            tableNames.Add(reader.GetString(0));
+        }
+
+        reader.Close();
+
+        // Para cada tabla, obtener sus columnas
+        var schemaDescription = new StringBuilder();
+
+        foreach (var tableName in tableNames)
+        {
+            schemaDescription.Append($"{tableName}(");
+
+            var columnsCmd = new SqlCommand(@"
+                SELECT COLUMN_NAME, DATA_TYPE
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = @TableName
+                ORDER BY ORDINAL_POSITION
+            ", connection);
+
+            columnsCmd.Parameters.AddWithValue("@TableName", tableName);
+
+            var columnsReader = columnsCmd.ExecuteReader();
+            var columns = new List&lt;string&gt;();
+
+            while (columnsReader.Read())
+            {
+                columns.Add($"{columnsReader.GetString(0)} {columnsReader.GetString(1)}");
+            }
+
+            schemaDescription.Append(string.Join(", ", columns));
+            schemaDescription.AppendLine(");");
+
+            columnsReader.Close();
+        }
+
+        return schemaDescription.ToString();
+    }
+}</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Consulta INFORMATION_SCHEMA para obtener todas las tablas</li>
+                    <li>Para cada tabla, obtiene todas sus columnas y tipos de datos</li>
+                    <li>Genera una descripción de texto del esquema: <span class="inline-code">Customers(CustomerID nvarchar, Name nvarchar);</span></li>
+                </ul>
+
+                <h4>3. Generar SQL con OpenAI</h4>
+<pre>// Generar SQL
+var (sqlQueryJson, promptSql) = await HumanQueryToSqlAsync(payload.HumanQuery);
+log.PromptToGenerateSql = promptSql;
+
+// Parse JSON response
+var cleanedJson = CleanJsonFromMarkdown(sqlQueryJson);
+var sqlQueryResult = JsonConvert.DeserializeObject&lt;Dictionary&lt;string, string&gt;&gt;(cleanedJson);
+
+if (sqlQueryResult == null || !sqlQueryResult.TryGetValue("sql_query", out var sqlQuery))
+{
+    log.ErrorMessage = "La respuesta no contenía la consulta SQL.";
+    _logService.AddLog(log);
+    return BadRequest(new { error = log.ErrorMessage });
+}
+
+log.GeneratedSql = sqlQuery;</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Llama a OpenAI con el esquema y la pregunta del usuario</li>
+                    <li>OpenAI retorna JSON con el SQL generado</li>
+                    <li>Limpia el JSON (OpenAI a veces lo envuelve en markdown)</li>
+                    <li>Extrae el SQL del campo <span class="inline-code">sql_query</span></li>
+                </ul>
+
+                <h4>4. Ejecutar consulta SQL</h4>
+<pre>// Ejecutar query
+var result = await QueryDatabaseAsync(sqlQuery);
+log.ResultCount = result.Count;
+log.RawDataJson = JsonConvert.SerializeObject(result);</pre>
+
+                <p>El método <span class="inline-code">QueryDatabaseAsync()</span>:</p>
+<pre>private async Task&lt;List&lt;Dictionary&lt;string, object&gt;&gt;&gt; QueryDatabaseAsync(string sqlQuery)
+{
+    var results = new List&lt;Dictionary&lt;string, object&gt;&gt;();
+
+    try
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using (var command = new SqlCommand(sqlQuery, connection))
+            {
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var row = new Dictionary&lt;string, object&gt;();
+
+                        for (int i = 0; i &lt; reader.FieldCount; i++)
+                        {
+                            var columnName = reader.GetName(i);
+                            var value = await reader.IsDBNullAsync(i) ? null : reader.GetValue(i);
+                            row[columnName] = value;
+                        }
+
+                        results.Add(row);
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error ejecutando SQL generado:");
+        Console.WriteLine(ex.Message);
+    }
+
+    return results;
+}</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Ejecuta el SQL generado contra SQL Server</li>
+                    <li>Convierte cada fila en un Dictionary&lt;string, object&gt;</li>
+                    <li>Si hay error, lo registra y retorna lista vacía</li>
+                </ul>
+
+                <h4>5. Humanizar la respuesta</h4>
+<pre>// Generar respuesta humanizada
+var (answer, promptHumanize) = await BuildAnswerAsync(result, payload.HumanQuery);
+log.PromptToHumanize = promptHumanize;
+
+if (string.IsNullOrEmpty(answer))
+{
+    log.ErrorMessage = "No se pudo generar la respuesta humana.";
+    _logService.AddLog(log);
+    return BadRequest(new { error = log.ErrorMessage });
+}
+
+log.HumanizedAnswer = answer;
+log.Success = true;</pre>
+
+                <p>El método <span class="inline-code">BuildAnswerAsync()</span>:</p>
+<pre>private async Task&lt;(string response, string prompt)&gt; BuildAnswerAsync(
+    List&lt;Dictionary&lt;string, object&gt;&gt; result,
+    string humanQuery)
+{
+    var systemMessage = $@"
+        Given a user's question and the SQL rows response from the database,
+        write a human-readable response to the user's question.
+        &lt;user_question&gt;
+        {humanQuery}
+        &lt;/user_question&gt;
+        &lt;sql_response&gt;
+        {JsonConvert.SerializeObject(result)}
+        &lt;/sql_response&gt;
+    ";
+
+    var prompt = $"{systemMessage}";
+    var response = await _openAiService.SendPromptAsync(prompt);
+
+    return (response, prompt);
+}</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Envía a OpenAI: la pregunta original + los resultados de SQL</li>
+                    <li>OpenAI genera una respuesta en lenguaje natural</li>
+                    <li>Retorna la respuesta humanizada</li>
+                </ul>
+
+                <h4>6. Retornar respuesta al frontend</h4>
+<pre>return Ok(new {
+    success = true,
+    respuestaHumanizada = answer,
+    sqlGenerado = sqlQuery,
+    resultadosCrudos = result
+});
+}
+finally
+{
+    stopwatch.Stop();
+    log.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+    _logService.AddLog(log);
+}</pre>
+
+                <p><strong>¿Qué hace?</strong></p>
+                <ul>
+                    <li>Retorna un JSON con toda la información</li>
+                    <li>En el <span class="inline-code">finally</span>, siempre guarda el log (aunque falle)</li>
+                    <li>Registra el tiempo total de ejecución</li>
+                </ul>
+
+                <div class="warning-box">
+                    <h4>⚠️ Manejo de Errores</h4>
+                    <p>
+                        El sistema tiene varios niveles de manejo de errores:
+                    </p>
+                    <ul>
+                        <li>Si OpenAI no responde: retorna error 500</li>
+                        <li>Si el JSON está mal formateado: retorna error 400</li>
+                        <li>Si el SQL falla: retorna lista vacía y continúa (⚠️ podría generar respuesta incorrecta)</li>
+                        <li>Todos los errores se registran en el log</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 5: Ejemplos -->
+            <div id="examples" class="tab-content">
+                <h2>Ejemplos Prácticos <span class="difficulty-badge difficulty-beginner">Principiante</span></h2>
+
+                <h3>Ejemplo 1: Consulta Simple</h3>
+                <div class="info-box">
+                    <h4>💬 Pregunta</h4>
+                    <p>"¿Cuántos productos hay?"</p>
+                </div>
+
+                <h4>SQL Generado</h4>
+<pre>SELECT COUNT(*) as total FROM [Products]</pre>
+
+                <h4>Resultado de SQL</h4>
+<pre>[
+  {
+    "total": 77
+  }
+]</pre>
+
+                <h4>Respuesta Humanizada</h4>
+                <p class="success-box">"Hay 77 productos en total."</p>
+
+                <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+                <h3>Ejemplo 2: Consulta con Filtro</h3>
+                <div class="info-box">
+                    <h4>💬 Pregunta</h4>
+                    <p>"¿Qué productos cuestan más de $50?"</p>
+                </div>
+
+                <h4>SQL Generado</h4>
+<pre>SELECT [ProductName], [UnitPrice]
+FROM [Products]
+WHERE [UnitPrice] &gt; 50
+ORDER BY [UnitPrice] DESC</pre>
+
+                <h4>Resultado de SQL</h4>
+<pre>[
+  {
+    "ProductName": "Côte de Blaye",
+    "UnitPrice": 263.50
+  },
+  {
+    "ProductName": "Thüringer Rostbratwurst",
+    "UnitPrice": 123.79
+  },
+  {
+    "ProductName": "Mishi Kobe Niku",
+    "UnitPrice": 97.00
+  }
+]</pre>
+
+                <h4>Respuesta Humanizada</h4>
+                <p class="success-box">
+                    "Los productos que cuestan más de $50 son:<br>
+                    • Côte de Blaye - $263.50<br>
+                    • Thüringer Rostbratwurst - $123.79<br>
+                    • Mishi Kobe Niku - $97.00"
+                </p>
+
+                <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+                <h3>Ejemplo 3: Consulta con JOIN</h3>
+                <div class="info-box">
+                    <h4>💬 Pregunta</h4>
+                    <p>"¿Cuántas órdenes ha hecho cada cliente?"</p>
+                </div>
+
+                <h4>SQL Generado</h4>
+<pre>SELECT c.[CompanyName], COUNT(o.[OrderID]) as TotalOrders
+FROM [Customers] c
+LEFT JOIN [Orders] o ON c.[CustomerID] = o.[CustomerID]
+GROUP BY c.[CompanyName]
+ORDER BY TotalOrders DESC</pre>
+
+                <h4>Resultado de SQL</h4>
+<pre>[
+  {
+    "CompanyName": "Save-a-lot Markets",
+    "TotalOrders": 31
+  },
+  {
+    "CompanyName": "Ernst Handel",
+    "TotalOrders": 30
+  },
+  {
+    "CompanyName": "QUICK-Stop",
+    "TotalOrders": 28
+  }
+  // ... más resultados
+]</pre>
+
+                <h4>Respuesta Humanizada</h4>
+                <p class="success-box">
+                    "Los clientes con más órdenes son:<br>
+                    1. Save-a-lot Markets con 31 órdenes<br>
+                    2. Ernst Handel con 30 órdenes<br>
+                    3. QUICK-Stop con 28 órdenes"
+                </p>
+
+                <div class="info-box">
+                    <h4>💡 Tips para hacer mejores preguntas</h4>
+                    <ul>
+                        <li>Sé específico: "productos más caros" en lugar de "productos"</li>
+                        <li>Menciona límites: "los 10 mejores clientes"</li>
+                        <li>Usa nombres de tablas si los conocés: "de la tabla Orders"</li>
+                        <li>Indicá ordenamiento: "ordenado por fecha"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
