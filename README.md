@@ -133,7 +133,7 @@ En la carpeta del proyecto:
 dotnet run
 ```
 
-La primera vez tarda un poco más porque descarga las librerías. Cuando termina, se abre el navegador en **<http://localhost:5126/humanquery/humanquery.html>**.
+La primera vez tarda un poco más porque descarga las librerías. Cuando termina, se abre el navegador en **<http://localhost:5126/humanquery/>**. Para preguntar, tocá el botón 🤖 de abajo a la derecha: se abre el chat.
 
 Probá con preguntas como:
 
@@ -148,8 +148,8 @@ Para detenerla: `Ctrl + C` en la terminal.
 
 | Página | Qué muestra |
 |---|---|
-| `/humanquery/humanquery.html` | La caja para preguntar: respuesta, SQL generado y datos crudos |
-| `/humanquery/monitor.html` | **Todo lo que se le mandó a la IA en cada paso.** Mirala: ahí se ve el flujo completo por dentro |
+| `/humanquery/` | Inicio. El botón 🤖 abre el chat para preguntar: muestra la respuesta humanizada |
+| `/humanquery/monitor.html` | **El SQL generado, los datos crudos y todo lo que se le mandó a la IA en cada paso.** Mirala: ahí se ve el flujo completo por dentro |
 | `/humanquery/learn.html` | Explicación del código |
 | `/swagger` | La API, para probarla a mano |
 
